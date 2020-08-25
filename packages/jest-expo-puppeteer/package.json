@@ -28,7 +28,7 @@
     "@expo/config": "^3.2.3",
     "@expo/xdl": "^57.9.5",
     "getenv": "^1.0.0",
-    "jest": "^25.2.0",
+    "jest": "^26.3.0",
     "jest-puppeteer": "^4.4.0",
     "serve": "^11.3.0"
   },

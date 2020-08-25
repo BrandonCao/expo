@@ -6,6 +6,7 @@ import { NotificationContentInput } from './Notifications.types';
 
 let warningMessageShown = false;
 
+/** @deprecated */
 export default async function presentNotificationAsync(
   content: NotificationContentInput,
   identifier: string = uuidv4()
