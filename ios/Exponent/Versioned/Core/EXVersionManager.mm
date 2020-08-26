@@ -41,6 +41,7 @@
 #import <UMCore/UMModuleRegistryDelegate.h>
 #import <UMReactNativeAdapter/UMNativeModulesProxy.h>
 #import <EXMediaLibrary/EXMediaLibraryImageLoader.h>
+#import <EXFont/EXFontLoader.h>
 #import "EXScopedModuleRegistry.h"
 #import "EXScopedModuleRegistryAdapter.h"
 #import "EXScopedModuleRegistryDelegate.h"
@@ -282,6 +283,7 @@ RCT_EXTERN NSDictionary<NSString *, NSDictionary *> *EXGetScopedModuleClasses(vo
 
   NSMutableArray *extraModules = [NSMutableArray arrayWithArray:
                                   @[
+                                    [[EXFontLoader alloc] initWithFontFamilyPrefix:@"ExpoFont-"],
                                     [[EXAppState alloc] init],
                                     [[EXDisabledDevLoadingView alloc] init],
                                     [[EXStatusBarManager alloc] init],

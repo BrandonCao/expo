@@ -2,12 +2,13 @@
 
 #import <EXFont/EXFontLoader.h>
 #import <EXFont/EXFontLoaderProcessor.h>
-#import <EXFont/EXFontManagerInterface.h>
+#import <EXFont/EXReactFontManager.h>
 #import <EXFont/EXFontScaler.h>
 #import <EXFont/EXFont.h>
 #import <objc/runtime.h>
 #import <EXFont/EXFontRegistry.h>
 #import <EXFont/EXFontScalersManager.h>
+#import <React/RCTBridge.h>
 
 @interface EXFontLoader ()
 
@@ -19,7 +20,15 @@
 
 @implementation EXFontLoader
 
-UM_EXPORT_MODULE(ExpoFontLoader);
+RCT_EXPORT_MODULE(ExpoFontLoader)
+
+@synthesize bridge = _bridge;
+
++ (BOOL)requiresMainQueueSetup
+{
+  // We need to
+  return YES;
+}
 
 - (instancetype)init
 {
@@ -42,22 +51,21 @@ UM_EXPORT_MODULE(ExpoFontLoader);
 }
 
 
-- (void)setModuleRegistry:(UMModuleRegistry *)moduleRegistry
+- (void)setBridge:(RCTBridge *)bridge
 {
-  if (moduleRegistry) {
-    id<EXFontManagerInterface> manager = [moduleRegistry getModuleImplementingProtocol:@protocol(EXFontManagerInterface)];
+  if (bridge) {
+    EXReactFontManager *manager = [bridge moduleForName:@"FontManager"];
     [manager addFontProcessor:_processor];
-
-    id<EXFontScalersManager> scalersManager = [moduleRegistry getSingletonModuleForName:@"FontScalersManager"];
-    [scalersManager registerFontScaler:_scaler];
+    
+    [[EXFontScalersManager sharedInstance] registerFontScaler:_scaler];
   }
 }
 
-UM_EXPORT_METHOD_AS(loadAsync,
-                    loadAsyncWithFontFamilyName:(NSString *)fontFamilyName
-                    withLocalUri:(NSString *)path
-                    resolver:(UMPromiseResolveBlock)resolve
-                    rejecter:(UMPromiseRejectBlock)reject)
+RCT_REMAP_METHOD(loadAsync,
+                 loadAsyncWithFontFamilyName:(NSString *)fontFamilyName
+                 withLocalUri:(NSString *)path
+                 resolver:(RCTPromiseResolveBlock)resolve
+                 rejecter:(RCTPromiseRejectBlock)reject)
 {
   if ([_registry fontForName:fontFamilyName]) {
     reject(@"E_FONT_ALREADY_EXISTS",
@@ -65,7 +73,7 @@ UM_EXPORT_METHOD_AS(loadAsync,
            nil);
     return;
   }
-
+  
   // TODO(nikki): make sure path is in experience's scope
   NSURL *uriString = [[NSURL alloc] initWithString:path];
   NSData *data = [[NSFileManager defaultManager] contentsAtPath:[uriString path]];
@@ -75,7 +83,7 @@ UM_EXPORT_METHOD_AS(loadAsync,
            nil);
     return;
   }
-
+  
   CGDataProviderRef provider = CGDataProviderCreateWithCFData((__bridge CFDataRef)data);
   CGFontRef font = CGFontCreateWithDataProvider(provider);
   CGDataProviderRelease(provider);
@@ -85,7 +93,7 @@ UM_EXPORT_METHOD_AS(loadAsync,
            nil);
     return;
   }
-
+  
   [_registry setFont:[[EXFont alloc] initWithCGFont:font] forName:fontFamilyName];
   resolve(nil);
 }

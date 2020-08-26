@@ -1068,8 +1068,6 @@
 		BBE603732310CD8900971F79 /* RNCAppearanceProviderManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNCAppearanceProviderManager.m; sourceTree = "<group>"; };
 		BBE603742310CD8900971F79 /* RNCAppearanceProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNCAppearanceProvider.h; sourceTree = "<group>"; };
 		BBE603752310CD8900971F79 /* RNCAppearance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNCAppearance.h; sourceTree = "<group>"; };
-		BBE8539222B98828001FF9C2 /* EXScopedFontLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXScopedFontLoader.h; sourceTree = "<group>"; };
-		BBE8539322B98828001FF9C2 /* EXScopedFontLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EXScopedFontLoader.m; sourceTree = "<group>"; };
 		C147366B532F4B4387086885 /* RNSVGPathMeasure.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; path = RNSVGPathMeasure.h; sourceTree = "<group>"; };
 		C349E74BFFF643C38858FD6F /* RNSVGContextBrush.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; path = RNSVGContextBrush.m; sourceTree = "<group>"; };
 		C5DF76A1DCE14D2F9460F314 /* RNCSegmentedControl.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; path = RNCSegmentedControl.m; sourceTree = "<group>"; };
@@ -1315,8 +1313,6 @@
 				31361A592260B2F600662769 /* EXScopedSecureStore.m */,
 				31361A5B2260B9A400662769 /* EXScopedAmplitude.h */,
 				31361A5C2260B9A400662769 /* EXScopedAmplitude.m */,
-				BBE8539222B98828001FF9C2 /* EXScopedFontLoader.h */,
-				BBE8539322B98828001FF9C2 /* EXScopedFontLoader.m */,
 				31571B282265DC9700358D65 /* EXScopedSegment.h */,
 				31571B292265DC9700358D65 /* EXScopedSegment.m */,
 				31571B2B2265DD5800358D65 /* EXScopedLocalAuthentication.h */,
@@ -2892,7 +2888,6 @@
 				B5A72C2120A0D13E00974CCE /* EXCachedResource.m in Sources */,
 				B5FB745C1FF6DADB001C764B /* EXContainerView.m in Sources */,
 				78C832EA23546BD400448582 /* RNLongPressHandler.m in Sources */,
-				BBE8539422B98829001FF9C2 /* EXScopedFontLoader.m in Sources */,
 				7043DF8F2283303800272D74 /* RNSVGRect.m in Sources */,
 				78C832E923546BD400448582 /* RNPanHandler.m in Sources */,
 				BBD03196200011C9009F0434 /* RNAWSCognito.m in Sources */,

@@ -1,6 +1,6 @@
 // Copyright 2018-present 650 Industries. All rights reserved.
 
-#import <UMCore/UMSingletonModule.h>
+#import <Foundation/Foundation.h>
 
 @protocol EXFontScaler
 
@@ -8,12 +8,10 @@
 
 @end
 
-@protocol EXFontScalersManager
+@interface EXFontScalersManager : NSObject
+
++ (instancetype)sharedInstance;
 
 - (void)registerFontScaler:(id<EXFontScaler>)scaler;
-
-@end
-
-@interface EXFontScalersManager : UMSingletonModule <EXFontScalersManager>
 
 @end

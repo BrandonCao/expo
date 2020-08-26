@@ -1,8 +1,6 @@
 // Copyright 2018-present 650 Industries. All rights reserved.
 
 #import <EXFont/EXFontScalersManager.h>
-
-#import <UMCore/UMDefines.h>
 #import <EXFont/EXFont.h>
 
 #import <objc/runtime.h>
@@ -19,7 +17,7 @@ static NSPointerArray *currentFontScalers;
       return scaledFont;
     }
   }
-
+  
   return [self EXFontWithSize:fontSize];
 }
 
@@ -35,18 +33,28 @@ static NSPointerArray *currentFontScalers;
 
 @implementation EXFontScalersManager
 
-UM_REGISTER_SINGLETON_MODULE(FontScalersManager);
++ (instancetype)sharedInstance
+{
+  static EXFontScalersManager *manager;
+  static dispatch_once_t once;
+  dispatch_once(&once, ^{
+    if (!manager) {
+      manager = [EXFontScalersManager new];
+    }
+  });
+  return manager;
+}
 
 + (void)initialize
 {
   static dispatch_once_t initializeCurrentFontScalersOnce;
   dispatch_once(&initializeCurrentFontScalersOnce, ^{
     currentFontScalers = [NSPointerArray weakObjectsPointerArray];
-
+    
     Class uiFont = [UIFont class];
     SEL uiUpdate = @selector(fontWithSize:);
     SEL exUpdate = @selector(EXFontWithSize:);
-
+    
     method_exchangeImplementations(class_getInstanceMethod(uiFont, uiUpdate),
                                    class_getInstanceMethod(uiFont, exUpdate));
   });

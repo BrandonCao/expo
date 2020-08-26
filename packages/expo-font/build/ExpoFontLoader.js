@@ -1,3 +1,4 @@
-import { NativeModulesProxy } from '@unimodules/core';
-export default NativeModulesProxy.ExpoFontLoader;
+// @ts-ignore
+import { TurboModuleRegistry } from 'react-native';
+export default TurboModuleRegistry.get('ExpoFontLoader');
 //# sourceMappingURL=ExpoFontLoader.js.map

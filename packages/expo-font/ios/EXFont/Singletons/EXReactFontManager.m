@@ -1,20 +1,17 @@
 // Copyright 2018-present 650 Industries. All rights reserved.
 
-#if __has_include(<EXFont/EXFontManagerInterface.h>)
-
-#import <UMReactNativeAdapter/UMReactFontManager.h>
+#import <EXFont/EXReactFontManager.h>
 #import <React/RCTFont.h>
-#import <EXFont/EXFontManagerInterface.h>
-#import <UMCore/UMAppLifecycleService.h>
+
 #import <objc/runtime.h>
 
 static dispatch_once_t initializeCurrentFontProcessorsOnce;
 
 static NSPointerArray *currentFontProcessors;
 
-@implementation RCTFont (UMReactFontManager)
+@implementation RCTFont (EXReactFontManager)
 
-+ (UIFont *)UMUpdateFont:(UIFont *)uiFont
++ (UIFont *)EXUpdateFont:(UIFont *)uiFont
               withFamily:(NSString *)family
                     size:(NSNumber *)size
                   weight:(NSString *)weight
@@ -30,7 +27,7 @@ static NSPointerArray *currentFontProcessors;
     }
   }
 
-  return [self UMUpdateFont:uiFont withFamily:family size:size weight:weight style:style variant:variant scaleMultiplier:scaleMultiplier];
+  return [self EXUpdateFont:uiFont withFamily:family size:size weight:weight style:style variant:variant scaleMultiplier:scaleMultiplier];
 }
 
 @end
@@ -51,33 +48,20 @@ static NSPointerArray *currentFontProcessors;
  *    calls in fact implementation we've defined up here and calling `RCTFont UMUpdateFont` falls back
  *    to the default implementation. (This is why we call `[self UMUpdateFont]` at the end of that function,
  *    though it seems like an endless loop, in fact we dispatch to another implementation.)
- *  - When some module adds a font processor using UMFontManagerInterface, UMReactFontManager adds a weak pointer to it
+ *  - When some module adds a font processor using, EXReactFontManager adds a weak pointer to it
  *    to currentFontProcessors array.
- *  - Implementation logic of `RCTFont.UMUpdateFont` uses current value of currentFontProcessors when processing arguments.
+ *  - Implementation logic of `RCTFont.EXUpdateFont` uses current value of currentFontProcessors when processing arguments.
  */
 
-@interface UMReactFontManager ()
+@interface EXReactFontManager ()
 
 @property (nonatomic, strong) NSMutableSet *fontProcessors;
 
 @end
 
-@implementation UMReactFontManager
+@implementation EXReactFontManager
 
-UM_REGISTER_MODULE();
-
-- (instancetype)init
-{
-  if (self = [super init]) {
-    _fontProcessors = [NSMutableSet set];
-  }
-  return self;
-}
-
-+ (const NSArray<Protocol *> *)exportedInterfaces
-{
-  return @[@protocol(EXFontManagerInterface)];
-}
+RCT_EXPORT_MODULE(FontManager)
 
 + (void)initialize
 {
@@ -87,21 +71,21 @@ UM_REGISTER_MODULE();
 
   Class rtcClass = [RCTFont class];
   SEL rtcUpdate = @selector(updateFont:withFamily:size:weight:style:variant:scaleMultiplier:);
-  SEL exUpdate = @selector(UMUpdateFont:withFamily:size:weight:style:variant:scaleMultiplier:);
+  SEL exUpdate = @selector(EXUpdateFont:withFamily:size:weight:style:variant:scaleMultiplier:);
   
   method_exchangeImplementations(class_getClassMethod(rtcClass, rtcUpdate),
                                  class_getClassMethod(rtcClass, exUpdate));
 }
 
-# pragma mark - UMFontManager
-
 - (void)addFontProcessor:(id<EXFontProcessorInterface>)processor
 {
+  if (!_fontProcessors) {
+    _fontProcessors = [NSMutableSet set];
+  }
+
   [_fontProcessors addObject:processor];
   [currentFontProcessors compact];
   [currentFontProcessors addPointer:(__bridge void * _Nullable)(processor)];
 }
 
 @end
-
-#endif
