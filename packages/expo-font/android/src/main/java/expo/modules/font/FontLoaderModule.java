@@ -2,81 +2,65 @@
 
 package expo.modules.font;
 
-import android.content.Context;
 import android.graphics.Typeface;
 import android.net.Uri;
 
-import org.unimodules.core.ExportedModule;
-import org.unimodules.core.InvalidArgumentException;
-import org.unimodules.core.ModuleRegistry;
-import org.unimodules.core.Promise;
-import org.unimodules.core.interfaces.ExpoMethod;
-import org.unimodules.core.interfaces.services.FontManager;
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactContextBaseJavaModule;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.views.text.ReactFontManager;
 
 import java.io.File;
 
-import expo.modules.font.exceptions.NoFontManagerException;
+import androidx.annotation.NonNull;
 
-public class FontLoaderModule extends ExportedModule {
+public class FontLoaderModule extends ReactContextBaseJavaModule {
   private static final String ASSET_SCHEME = "asset://";
   private static final String EXPORTED_NAME = "ExpoFontLoader";
 
-  protected ModuleRegistry mModuleRegistry;
-
-  public FontLoaderModule(Context context) {
-    super(context);
+  public FontLoaderModule(@NonNull ReactApplicationContext reactContext) {
+    super(reactContext);
   }
 
+  @NonNull
   @Override
   public String getName() {
     return EXPORTED_NAME;
   }
 
-  @Override
-  public void onCreate(ModuleRegistry moduleRegistry) {
-    mModuleRegistry = moduleRegistry;
-  }
-
-  @ExpoMethod
+  @ReactMethod
   public void loadAsync(final String fontFamilyName, final String localUri, final Promise promise) {
     // Validate arguments
     if (fontFamilyName == null) {
-      promise.reject(new InvalidArgumentException("Font family name cannot be empty (null received)"));
+      promise.reject("ERR_INVALID_ARGUMENT", "Font family name cannot be empty (null received)");
       return;
     }
 
     if (localUri == null) {
-      promise.reject(new InvalidArgumentException("Local font URI cannot be empty (null received)"));
+      promise.reject("ERR_INVALID_ARGUMENT", "Local font URI cannot be empty (null received)");
       return;
     }
 
     try {
-      getFontManager().setTypeface(fontFamilyName, Typeface.NORMAL, getTypeface(localUri));
+      ReactFontManager.getInstance().setTypeface(fontFamilyName, Typeface.NORMAL, getTypeface(localUri));
       promise.resolve(null);
     } catch (Exception e) {
-      promise.reject(e);
+      promise.reject("ERR_UNEXPECTED", "Font loader encountered an unexpected error: " + e.getMessage(), e);
     }
   }
 
-  protected FontManager getFontManager() throws NoFontManagerException {
-    FontManager fontManager = mModuleRegistry.getModule(FontManager.class);
-    if (fontManager == null) {
-      throw new NoFontManagerException();
-    }
-    return fontManager;
-  }
-
-  protected Typeface getTypeface(String localUri) throws InvalidArgumentException {
+  protected Typeface getTypeface(String localUri) {
     if (localUri.startsWith(ASSET_SCHEME)) {
       return Typeface.createFromAsset(
-        getContext().getAssets(),
+        getReactApplicationContext().getAssets(),
         // Also remove the leading slash.
         localUri.substring(ASSET_SCHEME.length() + 1));
     }
 
     String localFontPath = Uri.parse(localUri).getPath();
     if (localFontPath == null) {
-      throw new InvalidArgumentException("Could not parse provided local font URI as a URI with a path component.");
+      throw new RuntimeException("Could not parse provided local font URI as a URI with a path component.");
     }
     return Typeface.createFromFile(new File(localFontPath));
   }
